@@ -2,7 +2,7 @@ import React from "react";
 import Chart, { Props } from "react-apexcharts";
 
 export const Steam = ({ downtimeData }: { downtimeData: any }) => {
-  const seriesData = downtimeData ? downtimeData.dataMinutes : [];
+  const seriesData = downtimeData ? downtimeData.dataSeconds : [];
   const categories = downtimeData ? downtimeData.date : [];
   const formattedData = downtimeData ? downtimeData.data : [];
 
@@ -40,7 +40,7 @@ export const Steam = ({ downtimeData }: { downtimeData: any }) => {
     },
     yaxis: {
       title: {
-        text: "Downtime (Minutes)",
+        text: "Downtime (Seconds)",
         style: {
           color: "hsl(var(--nextui-default-800))",
           fontSize: "14px",
@@ -63,7 +63,7 @@ export const Steam = ({ downtimeData }: { downtimeData: any }) => {
           <div class="apexcharts-tooltip-custom">
             <span>${categories[dataPointIndex]}</span><br />
             <span>Downtime: ${formattedData[dataPointIndex]}</span><br />
-            <span>Minutes: ${seriesData[dataPointIndex].toFixed(2)}m</span>
+            <span>Seconds: ${seriesData[dataPointIndex].toFixed(0)}s</span>
           </div>
         `;
       },
@@ -81,18 +81,18 @@ export const Steam = ({ downtimeData }: { downtimeData: any }) => {
         colors: {
           ranges: [
             {
-              from: 120,
+              from: 600, // 10 minutes in seconds
               to: Number.MAX_VALUE,
-              color: "#FF0000", // Red color for values greater than 2 hours
+              color: "#FF0000",
             },
             {
-              from: 60,
-              to: 119,
-              color: "#D8B632", // Yellow color for values between 1 and 2 hours
+              from: 300, // 5 minutes in seconds
+              to: 7199,
+              color: "#D8B632", 
             },
             {
               from: 0,
-              to: 59,
+              to: 3599,
               color: "#1e81b0", // Blue color for values less than 1 hour
             },
           ],
@@ -105,7 +105,7 @@ export const Steam = ({ downtimeData }: { downtimeData: any }) => {
     },
     dataLabels: {
       enabled: true,
-      formatter: (val) => `${(val as number).toFixed(2)}m`,
+      formatter: (val) => `${(val as number).toFixed(0)}s`,
       style: {
         colors: ["hsl(var(--nextui-default-800))"],
         fontSize: "12px",

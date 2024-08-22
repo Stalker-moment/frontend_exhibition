@@ -18,6 +18,8 @@ export const Sensor = () => {
     UnitCurrent: "A",
     Pressure: 0,
     UnitPressure: "bar",
+    IndexCurrent: "normal",
+    IndexPressure: "normal",
   });
   const [chartData, setChartData] = useState({
     TimeChart: [],
@@ -69,6 +71,8 @@ export const Sensor = () => {
           UnitCurrent: data.UnitCurrent,
           Pressure: data.Pressure,
           UnitPressure: data.UnitPressure,
+          IndexCurrent: data.indexCurrent,
+          IndexPressure: data.indexPressure,
         });
       } catch (error) {
         console.error("Error parsing WebSocket message", error);
@@ -144,8 +148,8 @@ export const Sensor = () => {
           <div className="flex flex-col gap-4">
             <h3 className="text-xl font-semibold">Realtime Data Sensor</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <CardBalance1 current={sensorData.Current} unitCurrent={sensorData.UnitCurrent} />
-              <CardBalance2 pressure={sensorData.Pressure} unitPressure={sensorData.UnitPressure} />
+              <CardBalance1 current={sensorData.Current} unitCurrent={sensorData.UnitCurrent} indexCurrent={sensorData.IndexCurrent as "normal" | "low" | "over"} />
+              <CardBalance2 pressure={sensorData.Pressure} unitPressure={sensorData.UnitPressure} indexPressure={sensorData.IndexPressure as "normal" | "low" | "over"} />
             </div>
           </div>
 

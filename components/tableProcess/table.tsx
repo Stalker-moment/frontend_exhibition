@@ -58,7 +58,7 @@ export const TableWrapper = () => {
 
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data) as UserData[];
-      const updatedData = data.map((user) => {
+      const updatedData = data?.map((user) => {
         const startTime = new Date(user.startTime);
         const cycleTime = `${user.processTime} sec`; // Format the processTime as cycleTime
 
