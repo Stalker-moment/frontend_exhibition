@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Card, CardBody, Progress } from "@nextui-org/react";
+import { PiShootingStarThin } from "react-icons/pi";
+import { AiOutlineStock } from "react-icons/ai";
+import { MdEventAvailable } from "react-icons/md";
 
 export const CardBalance2 = () => {
   const [data, setData] = useState({
@@ -79,7 +82,7 @@ export const CardBalance2 = () => {
         </div>
         <div className="flex items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-green-400 text-base">{"↓"}</span>
+            <span className="font-semibold text-green-400 text-base"><PiShootingStarThin /></span>
             <div className="flex flex-col">
               <span className="text-white text-lg font-semibold">
                 {data.quality}{data.unit}
@@ -89,7 +92,7 @@ export const CardBalance2 = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-red-400 text-base">{"↑"}</span>
+            <span className="font-semibold text-red-400 text-base"><AiOutlineStock /></span>
             <div className="flex flex-col">
               <span className="text-white text-lg font-semibold">
                 {data.performance}{data.unit}
@@ -99,7 +102,7 @@ export const CardBalance2 = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-yellow-400 text-base">{"⭐"}</span>
+            <span className="font-semibold text-yellow-400 text-base"><MdEventAvailable /></span>
             <div className="flex flex-col">
               <span className="text-white text-lg font-semibold">
                 {data.availability}{data.unit}

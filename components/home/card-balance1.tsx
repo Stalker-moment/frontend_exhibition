@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardBody, Progress } from "@nextui-org/react";
 import { MdOutlineOutput } from "react-icons/md";
+import { MdFileDownloadDone } from "react-icons/md";
+import { FcProcess } from "react-icons/fc";
+import { PiTargetBold } from "react-icons/pi";
 
 export const CardBalance1 = () => {
   const [data, setData] = useState({
@@ -38,7 +41,7 @@ export const CardBalance1 = () => {
         </div>
         <div className="flex items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-green-400 text-base">{"↓"}</span>
+            <span className="font-semibold text-green-400 text-base"><MdFileDownloadDone /></span>
             <div className="flex flex-col">
               <span className="text-white text-lg font-semibold">{data.Done}</span>
               <span className="text-gray-400 text-sm">Done</span>
@@ -46,7 +49,7 @@ export const CardBalance1 = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-red-400 text-base">{"↑"}</span>
+            <span className="font-semibold text-red-400 text-base"><FcProcess /></span>
             <div className="flex flex-col">
               <span className="text-white text-lg font-semibold">{data.Open}</span>
               <span className="text-gray-400 text-sm">Open</span>
@@ -54,7 +57,7 @@ export const CardBalance1 = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-yellow-400 text-base">{"⭐"}</span>
+            <span className="font-semibold text-yellow-400 text-base"><PiTargetBold /></span>
             <div className="flex flex-col">
               <span className="text-white text-lg font-semibold">{data.target}</span>
               <span className="text-gray-400 text-sm">Target</span>

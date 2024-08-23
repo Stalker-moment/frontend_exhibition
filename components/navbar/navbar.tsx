@@ -1,9 +1,8 @@
-import { Input, Link, Navbar, NavbarContent } from "@nextui-org/react";
-import React from "react";
+import { Link, Navbar, NavbarContent } from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
 import { FeedbackIcon } from "../icons/navbar/feedback-icon";
 import { GithubIcon } from "../icons/navbar/github-icon";
 import { SupportIcon } from "../icons/navbar/support-icon";
-import { SearchIcon } from "../icons/searchicon";
 import { BurguerButton } from "./burguer-button";
 import { NotificationsDropdown } from "./notifications-dropdown";
 import { UserDropdown } from "./user-dropdown";
@@ -13,6 +12,65 @@ interface Props {
 }
 
 export const NavbarWrapper = ({ children }: Props) => {
+  const [isOnline, setIsOnline] = useState<boolean | null>(null);
+  const [userEmail, setUserEmail] = useState<string>("guest");
+
+  useEffect(() => {
+    const ws = new WebSocket("wss://machapi.akti.cloud/online");
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        setIsOnline(data.isOnline);
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("userAuth");
+    if (token) {
+      fetch("https://machapi.akti.cloud/api/users/token/info", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          console.log("Response status:", response.status);
+          if (!response.ok) {
+            throw new Error("Network response was not ok.");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("API response data:", data);
+          if (data.decoded) {
+            setUserEmail(data.decoded.email || "guest");
+          } else {
+            console.error("Error with API response:", data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching user info:", error);
+        });
+    }
+  }, []);   
+
   return (
     <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
       <Navbar
@@ -25,17 +83,22 @@ export const NavbarWrapper = ({ children }: Props) => {
         <NavbarContent className="md:hidden">
           <BurguerButton />
         </NavbarContent>
-        <NavbarContent className="w-full max-md:hidden">
-          <Input
-            startContent={<SearchIcon />}
-            isClearable
-            className="w-full"
-            classNames={{
-              input: "w-full",
-              mainWrapper: "w-full",
-            }}
-            placeholder="Search..."
-          />
+        <NavbarContent className="w-full max-md:hidden justify-center">
+          <div
+            className={`flex items-center justify-center w-full h-10 p-2 rounded text-white font-semibold ${
+              isOnline === null
+                ? "bg-gray-500"
+                : isOnline
+                ? "bg-green-500"
+                : "bg-red-500"
+            }`}
+          >
+            {isOnline === null
+              ? "Connecting..."
+              : isOnline
+              ? "Machine Online"
+              : "Machine Offline"}
+          </div>
         </NavbarContent>
         <NavbarContent
           justify="end"
@@ -59,7 +122,7 @@ export const NavbarWrapper = ({ children }: Props) => {
             <GithubIcon />
           </Link>
           <NavbarContent>
-            <UserDropdown />
+            <UserDropdown email={userEmail} /> {/* Kirim email ke UserDropdown */}
           </NavbarContent>
         </NavbarContent>
       </Navbar>

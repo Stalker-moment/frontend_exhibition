@@ -58,10 +58,10 @@ const chartOptions: Props["options"] = {
           fontSize: "12px",
           fontFamily: "inherit",
         },
-        formatter: (value) => `${value} A`,
+        formatter: (value) => `${value} mA`,
       },
       title: {
-        text: "Current (Ampere)",
+        text: "Current (mA)",
         style: {
           color: "hsl(var(--nextui-default-800))",
           fontSize: "14px",
@@ -100,7 +100,7 @@ const chartOptions: Props["options"] = {
     },
     y: {
       formatter: (value, { series, seriesIndex }) => {
-        const labels = seriesIndex === 0 ? " A" : " Bar";
+        const labels = seriesIndex === 0 ? " mA" : " Bar";
         return `${value}${labels}`;
       },
     },
@@ -133,9 +133,9 @@ const chartOptions: Props["options"] = {
   annotations: {
     yaxis: [
       {
-        y: 3,
+        y: 240,
         borderColor: "hsl(0, 100%, 50%)",
-        strokeDashArray: 4,
+        strokeDashArray: 3,
         label: {
           borderColor: "hsl(0, 100%, 50%)",
           style: {
@@ -146,16 +146,16 @@ const chartOptions: Props["options"] = {
         },
       },
       {
-        y: 4,
+        y: 150,
         borderColor: "hsl(0, 100%, 50%)",
-        strokeDashArray: 4,
+        strokeDashArray: 3,
         label: {
           borderColor: "hsl(0, 100%, 50%)",
           style: {
             color: "#fff",
             background: "hsl(0, 100%, 50%)",
           },
-          text: "4 Ampere",
+          text: "150 mA",
         },
       },
     ],

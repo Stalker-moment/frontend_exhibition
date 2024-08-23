@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Sidebar } from "./sidebar.styles";
 import { Avatar, Tooltip } from "@nextui-org/react";
 import { CompaniesDropdown } from "./companies-dropdown";
@@ -19,13 +19,50 @@ import { SidebarMenu } from "./sidebar-menu";
 import { FilterIcon } from "../icons/sidebar/filter-icon";
 import { useSidebarContext } from "../layout/layout-context";
 import { ChangeLogIcon } from "../icons/sidebar/changelog-icon";
-import { AiFillThunderbolt } from "react-icons/ai";
-import { AiOutlineStock, AiFillControl } from "react-icons/ai";
+import { AiFillControl, AiOutlineStock } from "react-icons/ai";
 import { usePathname } from "next/navigation";
+import Cookies from "js-cookie"; // Import js-cookie for handling cookies
 
 export const SidebarWrapper = () => {
   const pathname = usePathname();
   const { collapsed, setCollapsed } = useSidebarContext();
+  const [isGuest, setIsGuest] = useState(false);
+  const [isValidUser, setIsValidUser] = useState(false);
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      const userAuth = Cookies.get("userAuth"); // Get userAuth from cookies
+
+      if (!userAuth || userAuth === "guest") {
+        setIsGuest(true); // User is guest
+      } else {
+        try {
+          // Validate the token with the API
+          const response = await fetch(
+            "https://machapi.akti.cloud/api/users/token/validator",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: userAuth, // Send userAuth as the Authorization header
+              },
+            }
+          );
+
+          if (response.ok) {
+            setIsValidUser(true); // Token is valid, user is authenticated
+          } else {
+            setIsGuest(true); // Token is invalid, fallback to guest
+          }
+        } catch (error) {
+          console.error("Error validating token:", error);
+          setIsGuest(true); // In case of an error, treat as guest
+        }
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
 
   return (
     <aside className="h-screen z-[20] sticky top-0">
@@ -49,37 +86,11 @@ export const SidebarWrapper = () => {
               href="/"
             />
             <SidebarMenu title="Menu">
-              {/* <SidebarItem
-                isActive={pathname === "/payments"}
-                title="Payments"
-                icon={<PaymentsIcon />}
-              />
-              <CollapseItems
-                icon={<BalanceIcon />}
-                items={["Banks Accounts", "Credit Cards", "Loans"]}
-                title="Balances"
-              />
-              <SidebarItem
-                isActive={pathname === "/customers"}
-                title="Customers"
-                icon={<CustomersIcon />}
-              />
-              <SidebarItem
-                isActive={pathname === "/products"}
-                title="Products"
-                icon={<ProductsIcon />}
-              /> */}
               <SidebarItem
                 isActive={pathname === "/downtime"}
                 title="Down Time"
                 icon={<ReportsIcon />}
                 href="/downtime"
-              />
-              <SidebarItem
-                isActive={pathname === "/control"}
-                title="Machine Control"
-                icon={<AiFillControl />}
-                href="/control"
               />
               <SidebarItem
                 isActive={pathname === "/sensor"}
@@ -89,38 +100,28 @@ export const SidebarWrapper = () => {
               />
             </SidebarMenu>
 
-            <SidebarMenu title="Admin">
-            <SidebarItem
-                isActive={pathname === "/accounts"}
-                title="Accounts"
-                icon={<AccountsIcon />}
-                href="accounts"
-              />
-              <SidebarItem
-                isActive={pathname === "/configurations"}
-                title="Configurations"
-                icon={<DevIcon />}
-                href="configurations"
-              />
-              {/* <SidebarItem
-                isActive={pathname === "/view"}
-                title="View Test Data"
-                icon={<ViewIcon />}
-              /> */}
-              {/* <SidebarItem
-                isActive={pathname === "/settings"}
-                title="Settings"
-                icon={<SettingsIcon />}
-              /> */}
-            </SidebarMenu>
-
-            {/* <SidebarMenu title="Updates">
-              <SidebarItem
-                isActive={pathname === "/changelog"}
-                title="Changelog"
-                icon={<ChangeLogIcon />}
-              />
-            </SidebarMenu> */}
+            {!isGuest && isValidUser && (
+              <SidebarMenu title="Admin">
+                <SidebarItem
+                  isActive={pathname === "/accounts"}
+                  title="Accounts"
+                  icon={<AccountsIcon />}
+                  href="accounts"
+                />
+                <SidebarItem
+                  isActive={pathname === "/control"}
+                  title="Machine Control"
+                  icon={<AiFillControl />}
+                  href="/control"
+                />
+                <SidebarItem
+                  isActive={pathname === "/configurations"}
+                  title="Configurations"
+                  icon={<DevIcon />}
+                  href="configurations"
+                />
+              </SidebarMenu>
+            )}
           </div>
           <div className={Sidebar.Footer()}>
             <Tooltip content={"Settings"} color="primary">

@@ -103,7 +103,15 @@ export const TableWrapper = () => {
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <Table aria-label="Example table with custom cells">
+      <Table
+        aria-label="Table Process"
+        isHeaderSticky
+        bottomContent={null}
+        classNames={{
+          base: "max-h-[520px] rounded-lg shadow-inner",
+          table: "min-h-[420px]",
+        }}
+      >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn
