@@ -1,18 +1,44 @@
 "use client";
-import { Button, Input } from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
+import { Input } from "@nextui-org/react";
 import Link from "next/link";
-import React from "react";
-import { DotsIcon } from "@/components/icons/accounts/dots-icon";
-import { ExportIcon } from "@/components/icons/accounts/export-icon";
-import { InfoIcon } from "@/components/icons/accounts/info-icon";
-import { TrashIcon } from "@/components/icons/accounts/trash-icon";
 import { HouseIcon } from "@/components/icons/breadcrumb/house-icon";
 import { UsersIcon } from "@/components/icons/breadcrumb/users-icon";
-import { SettingsIcon } from "@/components/icons/sidebar/settings-icon";
-import { TableWrapper } from "@/components/table/table";
 import { AddUser } from "./add-user";
+import { TableWrapper } from "@/components/table/table";
 
 export const Accounts = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [users, setUsers] = useState<any[]>([]); // Adjust the type as needed
+
+  useEffect(() => {
+    // Initialize WebSocket connection
+    const ws = new WebSocket(`wss://machapi.akti.cloud/accounts?search=${searchQuery}`);
+
+    ws.onopen = () => {
+      console.log("WebSocket connection established.");
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setUsers(data);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    // Clean up the WebSocket connection when the component unmounts
+    return () => {
+      ws.close();
+    };
+  }, [searchQuery]);
+
+  // Handle search input changes
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
   return (
     <div className="my-10 px-4 lg:px-6 max-w-[95rem] mx-auto w-full flex flex-col gap-4">
       <ul className="flex">
@@ -21,13 +47,12 @@ export const Accounts = () => {
           <Link href={"/"}>
             <span>Home</span>
           </Link>
-          <span> / </span>{" "}
+          <span> / </span>
         </li>
-
         <li className="flex gap-2">
           <UsersIcon />
           <span>Users</span>
-          <span> / </span>{" "}
+          <span> / </span>
         </li>
         <li className="flex gap-2">
           <span>List</span>
@@ -43,21 +68,16 @@ export const Accounts = () => {
               mainWrapper: "w-full",
             }}
             placeholder="Search users"
+            value={searchQuery}
+            onChange={handleSearch}
           />
-          <SettingsIcon />
-          <TrashIcon />
-          <InfoIcon />
-          <DotsIcon />
         </div>
         <div className="flex flex-row gap-3.5 flex-wrap">
           <AddUser />
-          <Button color="primary" startContent={<ExportIcon />}>
-            Export to CSV
-          </Button>
         </div>
       </div>
       <div className="max-w-[95rem] mx-auto w-full">
-        <TableWrapper />
+        <TableWrapper users={users} />
       </div>
     </div>
   );

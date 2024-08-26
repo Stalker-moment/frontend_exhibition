@@ -26,30 +26,6 @@ export const RenderCell = ({ user, columnKey }: Props) => {
   const cellValue = (user as Record<string, any>)[columnKey as string];
 
   switch (columnKey) {
-    case "name":
-      return (
-        <User
-          avatarProps={{
-            src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-          }}
-          name={cellValue}
-        >
-          {user.email}
-        </User>
-      );
-
-    case "role":
-      return (
-        <div>
-          <div>
-            <span>{cellValue}</span>
-          </div>
-          <div>
-            <span>{user.team}</span>
-          </div>
-        </div>
-      );
-
     case "status":
       const color =
         cellValue === "L40"

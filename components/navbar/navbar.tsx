@@ -6,6 +6,8 @@ import { SupportIcon } from "../icons/navbar/support-icon";
 import { BurguerButton } from "./burguer-button";
 import { NotificationsDropdown } from "./notifications-dropdown";
 import { UserDropdown } from "./user-dropdown";
+import Cookies from "js-cookie"; 
+import { set } from "date-fns";
 
 interface Props {
   children: React.ReactNode;
@@ -13,7 +15,9 @@ interface Props {
 
 export const NavbarWrapper = ({ children }: Props) => {
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
+  const [isDowntime, setIsDowntime] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("guest");
+  const [time, setTime] = useState<string>("");
 
   useEffect(() => {
     const ws = new WebSocket("wss://machapi.akti.cloud/online");
@@ -22,6 +26,8 @@ export const NavbarWrapper = ({ children }: Props) => {
       try {
         const data = JSON.parse(event.data);
         setIsOnline(data.isOnline);
+        setIsDowntime(data.downtime);
+        setTime(data.time);
       } catch (error) {
         console.error("Error parsing WebSocket message:", error);
       }
@@ -41,7 +47,7 @@ export const NavbarWrapper = ({ children }: Props) => {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("userAuth");
+    const token = Cookies.get("userAuth");
     if (token) {
       fetch("https://machapi.akti.cloud/api/users/token/info", {
         method: "POST",
@@ -88,35 +94,37 @@ export const NavbarWrapper = ({ children }: Props) => {
             className={`flex items-center justify-center w-full h-10 p-2 rounded text-white font-semibold ${
               isOnline === null
                 ? "bg-gray-500"
-                : isOnline
+                : isOnline && !isDowntime
                 ? "bg-green-500"
-                : "bg-red-500"
+                : isOnline && isDowntime
+                ? "bg-gradient" : "bg-red-500"
             }`}
           >
-            {isOnline === null
+            {isOnline === null 
               ? "Connecting..."
-              : isOnline
+              : isOnline && !isDowntime
               ? "Machine Online"
-              : "Machine Offline"}
+              : isOnline && isDowntime 
+              ? `Machine Downtime ${time}` : "Machine Offline"}
           </div>
         </NavbarContent>
         <NavbarContent
           justify="end"
           className="w-fit data-[justify=end]:flex-grow-0"
         >
-          <div className="flex items-center gap-2 max-md:hidden">
+          {/* <div className="flex items-center gap-2 max-md:hidden">
             <FeedbackIcon />
             <span>Feedback?</span>
-          </div>
+          </div> */}
 
           <NotificationsDropdown />
 
-          <div className="max-md:hidden">
+          {/* <div className="max-md:hidden">
             <SupportIcon />
-          </div>
+          </div> */}
 
           <Link
-            href="https://github.com/Siumauricio/nextui-dashboard-template"
+            href="https://github.com/Stalker-moment"
             target={"_blank"}
           >
             <GithubIcon />

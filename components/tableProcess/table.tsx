@@ -99,6 +99,7 @@ export const TableWrapper = () => {
         clearTimeout(reconnectInterval.current);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -109,7 +110,8 @@ export const TableWrapper = () => {
         bottomContent={null}
         classNames={{
           base: "max-h-[520px] rounded-lg shadow-inner",
-          table: "min-h-[420px]",
+          table: "table-auto", // Use auto table layout
+          tbody: "align-top"    // Ensure content aligns to the top
         }}
       >
         <TableHeader columns={columns}>

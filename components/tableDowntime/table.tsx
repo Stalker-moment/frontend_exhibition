@@ -29,12 +29,13 @@ export const TableWrapper = ({ logsData }: { logsData: any[] }) => {
       </div>
 
       <Table
-        aria-label="Table Downtime Logs"
+        aria-label="Table Process"
         isHeaderSticky
         bottomContent={null}
         classNames={{
           base: "max-h-[520px] rounded-lg shadow-inner",
-          table: "min-h-[420px]",
+          table: "table-auto", // Use auto table layout
+          tbody: "align-top"    // Ensure content aligns to the top
         }}
       >
         <TableHeader columns={columns} className="sticky-header">

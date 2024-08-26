@@ -8,6 +8,19 @@ body {
   margin: 0;
 }
 
+@keyframes fadeIn {
+  0%, 100%{
+    background-color: rgb(183, 41, 70);
+  }
+  50% {
+    background-color: rgb(103, 104, 5);
+  }
+}
+
+.bg-gradient {
+  animation: fadeIn 1s infinite;
+}
+
 * {
   box-sizing: border-box;
 }

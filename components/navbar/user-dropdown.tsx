@@ -29,9 +29,8 @@ export const UserDropdown = ({ email }: UserDropdownProps) => {
         <DropdownTrigger>
           <Avatar
             as="button"
-            color="secondary"
             size="md"
-            src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+            src="https://machapi.akti.cloud/api/internal/img/logo.png"
           />
         </DropdownTrigger>
       </NavbarItem>

@@ -1,5 +1,9 @@
+import dynamic from "next/dynamic";
 import React from "react";
-import Chart, { Props } from "react-apexcharts";
+import { Props } from "react-apexcharts";
+
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+import("react-apexcharts");
 
 interface SteamProps {
   chartData: {
@@ -133,7 +137,8 @@ const chartOptions: Props["options"] = {
   annotations: {
     yaxis: [
       {
-        y: 240,
+        y: 3,
+        yAxisIndex: 1,
         borderColor: "hsl(0, 100%, 50%)",
         strokeDashArray: 3,
         label: {
@@ -147,6 +152,7 @@ const chartOptions: Props["options"] = {
       },
       {
         y: 150,
+        yAxisIndex: 0,
         borderColor: "hsl(0, 100%, 50%)",
         strokeDashArray: 3,
         label: {

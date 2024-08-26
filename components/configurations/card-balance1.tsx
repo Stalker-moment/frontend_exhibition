@@ -1,24 +1,78 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardBody, Button, Input } from "@nextui-org/react";
+import Cookies from "js-cookie"; 
 
 export const CardBalance1 = ({ config }: { config: { batchNumber: string; targetProduction: number; targetCycleTime: number; targetTotalTime: number; } }) => {
   const [showForm, setShowForm] = useState(false);
   const [newTargetProduction, setNewTargetProduction] = useState(config.targetProduction.toString());
   const [newTargetCycleTime, setNewTargetCycleTime] = useState(config.targetCycleTime.toString());
 
+  useEffect(() => {
+    const ws = new WebSocket("wss://machapi.akti.cloud/get-config");
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        setNewTargetProduction(data.targetProduction.toString());
+        setNewTargetCycleTime(data.targetCycleTime.toString());
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    // Cleanup WebSocket connection on unmount
+    return () => {
+      ws.close();
+    };
+  }, []);
+
   const handleNewBatchClick = () => {
     setShowForm(!showForm);
   };
 
-  const handleSubmit = () => {
-    // Update the config with new values (for demo, you can use console.log or other actions)
-    console.log({
-      batchNumber: config.batchNumber,
-      targetProduction: newTargetProduction,
-      targetCycleTime: newTargetCycleTime,
-      targetTotalTime: config.targetTotalTime,
-    });
-    setShowForm(false);
+  const handleSubmit = async () => {
+    try {
+      // Wait for the token to be resolved
+      const token = Cookies.get('userAuth');
+
+      if (!token) {
+        console.error('Authorization token not found');
+        return;
+      }
+
+      const requestHeaders = new Headers();
+      requestHeaders.append('Authorization', `Bearer ${token}`);
+      requestHeaders.append('Content-Type', 'application/json');
+
+      const requestBody = JSON.stringify({
+        production: parseInt(newTargetProduction),
+        time: parseInt(newTargetCycleTime),
+      });
+
+      const response = await fetch('https://machapi.akti.cloud/api/internal/config/new', {
+        method: 'POST',
+        headers: requestHeaders,
+        body: requestBody,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('API response:', result);
+        setShowForm(false);
+      } else {
+        console.error('Failed to update config:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   };
 
   return (
@@ -47,16 +101,16 @@ export const CardBalance1 = ({ config }: { config: { batchNumber: string; target
           <div className="mt-4 flex flex-col gap-4 bg-gray p-4 rounded-lg shadow-lg">
             <Input
               fullWidth
-              label="Target Production"
-              placeholder="Enter target production"
+              label="Target Production (Qty)"
+              placeholder={newTargetProduction}
               value={newTargetProduction}
               onChange={(e) => setNewTargetProduction(e.target.value)}
               className="text-white"
             />
             <Input
               fullWidth
-              label="Target Cycle Time"
-              placeholder="Enter target cycle time"
+              label="Target Cycle Time (seconds)"
+              placeholder={newTargetCycleTime}
               value={newTargetCycleTime}
               onChange={(e) => setNewTargetCycleTime(e.target.value)}
               className="text-white"

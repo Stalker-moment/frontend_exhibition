@@ -7,7 +7,7 @@ import { users } from "./data";
 
 interface Props {
   user: (typeof users)[number];
-  columnKey: string | React.Key;
+  columnKey: any;
 }
 
 export const RenderCell = ({ user, columnKey }: Props) => {

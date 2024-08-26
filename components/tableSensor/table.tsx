@@ -62,12 +62,13 @@ export const TableWrapper = ({ data }: TableWrapperProps) => {
   return (
     <div className="w-full flex flex-col gap-4">
       <Table
-        aria-label="Table sensor"
+        aria-label="Table Process"
         isHeaderSticky
         bottomContent={null}
         classNames={{
           base: "max-h-[520px] rounded-lg shadow-inner",
-          table: "min-h-[420px]",
+          table: "table-auto",
+          tbody: "align-top"
         }}
       >
         <TableHeader columns={columns}>
@@ -81,7 +82,7 @@ export const TableWrapper = ({ data }: TableWrapperProps) => {
         <TableBody items={data}>
           {(item) => (
             <TableRow key={item.id}>
-              {(columnKey) => (
+              {(columnKey: any) => (
                 <TableCell>
                   {renderCell(item, columnKey)}
                 </TableCell>

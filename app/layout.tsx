@@ -16,6 +16,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
+      <head>
+        <meta charSet='utf-8' />
+        <link rel="icon" href="https://machapi.akti.cloud/api/internal/img/default.png" />
+        <title>OEE Dashboard</title>
+      </head>
       <body className={clsx("font-sans antialiased", fontSans.className)}>
         <Providers>{children}</Providers>
       </body>

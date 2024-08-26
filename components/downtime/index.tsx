@@ -114,9 +114,9 @@ export const Downtime = () => {
           />
         </div>
         <div className="flex flex-row gap-3.5 flex-wrap">
-          <Button color="primary" startContent={<ExportIcon />}>
+          {/* <Button color="primary" startContent={<ExportIcon />}>
             Export to CSV
-          </Button>
+          </Button> */}
         </div>
       </div>
 

@@ -1,5 +1,9 @@
 import React from "react";
-import Chart, { Props } from "react-apexcharts";
+import dynamic from "next/dynamic";
+import { Props } from "react-apexcharts";
+
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+import("react-apexcharts");
 
 export const Steam = ({ downtimeData }: { downtimeData: any }) => {
   const seriesData = downtimeData ? downtimeData.dataSeconds : [];

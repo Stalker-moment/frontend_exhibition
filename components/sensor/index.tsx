@@ -20,6 +20,7 @@ export const Sensor = () => {
     UnitPressure: "bar",
     IndexCurrent: "normal",
     IndexPressure: "normal",
+    Power: 0,
   });
   const [chartData, setChartData] = useState({
     TimeChart: [],
@@ -73,6 +74,7 @@ export const Sensor = () => {
           UnitPressure: data.UnitPressure,
           IndexCurrent: data.indexCurrent,
           IndexPressure: data.indexPressure,
+          Power: data.Power,
         });
       } catch (error) {
         console.error("Error parsing WebSocket message", error);
@@ -148,14 +150,14 @@ export const Sensor = () => {
           <div className="flex flex-col gap-4">
             <h3 className="text-xl font-semibold">Realtime Data Sensor</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <CardBalance1 current={sensorData.Current} unitCurrent={sensorData.UnitCurrent} indexCurrent={sensorData.IndexCurrent as "normal" | "low" | "over"} />
+              <CardBalance1 current={sensorData.Current} unitCurrent={sensorData.UnitCurrent} indexCurrent={sensorData.IndexCurrent as "normal" | "low" | "over"} Power={sensorData.Power} />
               <CardBalance2 pressure={sensorData.Pressure} unitPressure={sensorData.UnitPressure} indexPressure={sensorData.IndexPressure as "normal" | "low" | "over"} />
             </div>
           </div>
 
           <div className="flex flex-col gap-4">
             <div className="flex justify-between flex-wrap gap-4 items-center">
-              <DatePicker
+              {/* <DatePicker
                 selected={selectedDate}
                 onChange={handleDateChange}
                 className="w-36 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -164,7 +166,7 @@ export const Sensor = () => {
                   date.getDay() === 0 ? "text-red-500" : "text-gray-900"
                 }
                 wrapperClassName="w-full"
-              />
+              /> */}
             </div>
             <div className="max-w-[95rem] mx-auto w-full">
               <Steam chartData={chartData} />
