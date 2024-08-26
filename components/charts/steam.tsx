@@ -1,9 +1,8 @@
 import dynamic from "next/dynamic";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Props } from "react-apexcharts";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
-import("react-apexcharts");
 
 interface SteamProps {
   chartData: {
@@ -135,40 +134,58 @@ const chartOptions: Props["options"] = {
     },
   },
   annotations: {
-    yaxis: [
-      {
-        y: 3,
-        yAxisIndex: 1,
-        borderColor: "hsl(0, 100%, 50%)",
-        strokeDashArray: 3,
-        label: {
-          borderColor: "hsl(0, 100%, 50%)",
-          style: {
-            color: "#fff",
-            background: "hsl(0, 100%, 50%)",
-          },
-          text: "3 Bar",
-        },
-      },
-      {
-        y: 150,
-        yAxisIndex: 0,
-        borderColor: "hsl(0, 100%, 50%)",
-        strokeDashArray: 3,
-        label: {
-          borderColor: "hsl(0, 100%, 50%)",
-          style: {
-            color: "#fff",
-            background: "hsl(0, 100%, 50%)",
-          },
-          text: "150 mA",
-        },
-      },
-    ],
+    yaxis: [], // Will be populated with dynamic data
   },
 };
 
 export const Steam: React.FC<SteamProps> = ({ chartData }) => {
+  const [annotations, setAnnotations] = useState(chartOptions.annotations?.yaxis || []);
+
+  useEffect(() => {
+    const ws = new WebSocket("wss://machapi.akti.cloud/normal");
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      const newAnnotations = [
+        {
+          y: data.maxPressure,
+          yAxisIndex: 1,
+          borderColor: "hsl(0, 100%, 50%)",
+          strokeDashArray: 3,
+          label: {
+            borderColor: "hsl(0, 100%, 50%)",
+            style: {
+              color: "#fff",
+              background: "hsl(0, 100%, 50%)",
+            },
+            text: `${data.maxPressure} Bar`,
+          },
+        },
+        {
+          y: data.maxCurrent,
+          yAxisIndex: 0,
+          borderColor: "hsl(0, 100%, 50%)",
+          strokeDashArray: 3,
+          label: {
+            borderColor: "hsl(0, 100%, 50%)",
+            style: {
+              color: "#fff",
+              background: "hsl(0, 100%, 50%)",
+            },
+            text: `${data.maxCurrent} mA`,
+          },
+        },
+      ];
+
+      setAnnotations(newAnnotations);
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+
   const series = [
     {
       name: "Current",
@@ -182,7 +199,7 @@ export const Steam: React.FC<SteamProps> = ({ chartData }) => {
 
   return (
     <Chart
-      options={{ ...chartOptions, xaxis: { categories: chartData.TimeChart } }}
+      options={{ ...chartOptions, xaxis: { categories: chartData.TimeChart }, annotations: { yaxis: annotations } }}
       series={series}
       type="line"
       height={500}
